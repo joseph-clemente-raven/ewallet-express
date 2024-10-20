@@ -77,12 +77,11 @@ const Map = () => {
   // Function to calculate the fare based on distance
   const calculateFare = (distance) => {
     const baseFare = 13; // Minimum fare in pesos
-    const distanceInMeters = distance * 1000; // Convert distance to meters
-    const extraMeters = Math.max(0, distanceInMeters - 1000); // Meters after the first kilometer
-    const extraFare = extraMeters * 0.01; // 0.01 peso per additional meter
-    return baseFare + extraFare; // Total fare: 13 pesos + 0.01 per extra meter
+    const distanceInInches = distance * 39370.1; // Convert distance to inches
+    const extraInches = Math.max(0, distanceInInches - 39370.1); // Inches after the first kilometer
+    const extraFare = extraInches * 0.01; // 0.01 peso per additional inch
+    return baseFare + extraFare; // Total fare: 13 pesos + 0.01 per extra inch
   };
-
   
   // Function to calculate the distance between two points (in kilometers)
   // const calculateDistance = (start, end) => {
@@ -134,12 +133,14 @@ const Map = () => {
       const newRoute = [startLocation, userLocation]; // Line between start and current location
       setRoute(newRoute); // Update the polyline route
     }
-  }, [isCommuting, startLocation, userLocation]);
-  
+  }, [isCommuting, startLocation, userLocation]);  
 
   return (
     <div className='h-screen w-full relative'>
-      <div className='w-full top-2 absolute flex flex-col py-2 items-center justify-center z-10'>
+      <div className='w-full bottom-2 absolute flex flex-col py-2 items-center justify-center z-10'>
+        <div className='mt-4'>  
+          <p className='text-center text-2xl font-bold'>Fare Fee: ₱{fareFee}</p>
+        </div>
         <div className='w-[90vw] sm:w-1/2 bg-white py-2 rounded-md flex flex-col sm:flex-row justify-start sm:justify-between items-center px-4'>
           <div className='text-left w-full sm:w-auto'>
             {userLocation ? (
@@ -174,9 +175,6 @@ const Map = () => {
               </button>
             </>
           )}
-        </div>
-        <div className='mt-4'>  
-          <p className='text-center text-2xl font-bold'>Fare Fee: ₱{fareFee}</p>
         </div>
       </div>
 

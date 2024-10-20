@@ -1,11 +1,11 @@
 'use client';
 
+import dynamic from 'next/dynamic'; // Dynamically load MapContainer
 import { useEffect, useState, useRef } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
-// Define custom icons to avoid default icon issues
+// Define custom icons
 const originIcon = new L.Icon({
   iconRetinaUrl: 'origin.png',
   iconSize: [20, 20],
@@ -25,6 +25,13 @@ const logisticIcon = new L.Icon({
   iconRetinaUrl: 'driver.gif',
   iconSize: [50, 50],
 });
+
+// Dynamically load MapContainer from 'react-leaflet' (client-side only)
+const MapContainer = dynamic(() => import('react-leaflet').then(mod => mod.MapContainer), { ssr: false });
+const TileLayer = dynamic(() => import('react-leaflet').then(mod => mod.TileLayer), { ssr: false });
+const Marker = dynamic(() => import('react-leaflet').then(mod => mod.Marker), { ssr: false });
+const Polyline = dynamic(() => import('react-leaflet').then(mod => mod.Polyline), { ssr: false });
+const Popup = dynamic(() => import('react-leaflet').then(mod => mod.Popup), { ssr: false });
 
 const TripTracking = () => {
   const [userLocation, setUserLocation] = useState(null); // Default to Manila
@@ -82,6 +89,28 @@ const TripTracking = () => {
     const extraFare = extraMeters * 0.01; // 0.01 peso per additional meter
     return baseFare + extraFare; // Total fare: 13 pesos + 0.01 per extra meter
   };
+
+  
+  // Function to calculate the distance between two points (in kilometers)
+  // const calculateDistance = (start, end) => {
+  //   const toRad = value => (value * Math.PI) / 180;
+  //   const R = 6371; // Earth's radius in kilometers
+  //   const latDiff = toRad(end[0] - start[0]);
+  //   const lonDiff = toRad(end[1] - start[1]);
+  //   const a =
+  //     Math.sin(latDiff / 2) * Math.sin(latDiff / 2) +
+  //     Math.cos(toRad(start[0])) * Math.cos(toRad(end[0])) *
+  //     Math.sin(lonDiff / 2) * Math.sin(lonDiff / 2);
+  //   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  //   return R * c; // Distance in kilometers
+  // };
+
+  // // Function to calculate the fare based on distance
+  // const calculateFare = (distance) => {
+  //   const baseFare = 13; // Minimum fare in pesos
+  //   const extraDistance = Math.max(0, distance - 1); // Distance after the first kilometer
+  //   return baseFare + extraDistance; // Fare: 13 pesos + 1 peso per additional km
+  // };
 
   // Function to start commuting
   const startCommuting = () => {

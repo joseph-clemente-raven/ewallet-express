@@ -32,7 +32,7 @@ export default function Login() {
 
   return (
     <main className="flex flex-col w-full">
-      <div className="relative w-full min-h-full sm:min-h-screen">
+      <div className="relative w-full min-h-screen">
         <Image 
           src={`${imgSetup}pexels-veerasak-piyawatanakul-392493-2415935.jpg`} 
           alt="banner" 
@@ -40,7 +40,7 @@ export default function Login() {
           objectFit="cover"
           className="h-full w-full"
         />
-        <div className="absolute inset-0 gap-4 flex sm:px-64 flex-col items-center justify-center text-center text-white bg-black bg-opacity-50">
+        <div className="absolute inset-0 gap-4 flex px-6 sm:px-64 flex-col items-center justify-center text-center text-white bg-black bg-opacity-50">
           <h1 className="text-4xl font-bold text-white">Welcome Back</h1>
           <p className="text-lg text-gray-200">Sign in to access your e-wallet and travel hassle-free.</p>
           <form onSubmit={formik.handleSubmit} className="flex flex-col w-full max-w-md">

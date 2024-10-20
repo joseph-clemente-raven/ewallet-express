@@ -14,7 +14,7 @@ export default function Navbar() {
 
     return (
         <div className="absolute top-0 left-0 right-0 flex justify-center z-50">
-            <div className='flex justify-between w-1/2 py-3'>
+            <div className='flex justify-between w-[90%] sm:w-1/2 py-3'>
                 <Link href={'/'}>
                     <Image src={`${imgSetup}logo.png`} alt='logo' objectFit='contain' width={70} height={70} />
                 </Link>

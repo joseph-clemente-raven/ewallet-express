@@ -140,8 +140,8 @@ const Map = () => {
   return (
     <div className='h-screen w-full relative'>
       <div className='w-full top-2 absolute flex flex-col py-2 items-center justify-center z-10'>
-        <div className='w-[90vw] sm:w-1/2 bg-white py-2 h-14 rounded-md flex justify-between items-center px-4'>
-          <div>
+        <div className='w-[90vw] sm:w-1/2 bg-white py-2 rounded-md flex flex-col sm:flex-row justify-start sm:justify-between items-center px-4'>
+          <div className='text-left w-full sm:w-auto'>
             {userLocation ? (
               <>
                 <p className='font-bold'>Current Location:</p>
@@ -168,7 +168,7 @@ const Map = () => {
               </div>
               <button
                 onClick={endCommuting}
-                className='bg-red-500 text-white px-4 py-1 rounded-md'
+                className='bg-red-500 text-white px-4 py-1 rounded-md mt-2'
               >
                 End Commute
               </button>

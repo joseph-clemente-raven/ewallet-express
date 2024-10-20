@@ -36,7 +36,7 @@ export default function Register() {
 
   return (
     <main className="flex flex-col w-full">
-      <div className="relative w-full min-h-full sm:min-h-screen">
+      <div className="relative w-full min-h-screen">
         <Image 
           src={`${imgSetup}pexels-mh92-7622913.jpg`} 
           alt="banner" 
@@ -44,7 +44,7 @@ export default function Register() {
           objectFit="cover"
           className="h-full w-full"
         />
-        <div className="absolute inset-0 gap-4 py-30 flex sm:px-64 flex-col items-center justify-center text-center text-white bg-black bg-opacity-50">
+        <div className="absolute inset-0 gap-4 py-30 flex px-6 sm:px-64 flex-col items-center justify-center text-center text-white bg-black bg-opacity-50">
           <h1 className="text-4xl font-bold text-white">Create Account</h1>
           <p className="text-lg text-gray-200">Sign up for a seamless travel experience with our e-wallet!</p>
           <form onSubmit={formik.handleSubmit} className="flex flex-col w-full max-w-md">

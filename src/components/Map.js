@@ -51,7 +51,7 @@ const Map = () => {
   
       return () => navigator.geolocation.clearWatch(watchId); // Cleanup on unmount
     }
-  }, []);
+  }, [isCommuting]);
   
   // Update map center when userLocation changes
   useEffect(() => {
@@ -117,6 +117,14 @@ const Map = () => {
     }
   };
 
+  useEffect(() => {
+    if (isCommuting && userLocation && startLocation) {
+      const distance = calculateDistance(startLocation, userLocation); 
+      const fare = calculateFare(distance); // Recalculate fare based on the new distance
+      setFareFee(fare.toFixed(2)); // Update fare with 2 decimal places
+    }
+  }, [userLocation, isCommuting]); // Trigger this effect when userLocation or isCommuting changes  
+
   // Function to end commuting
   const endCommuting = () => {
     setIsCommuting(false);
@@ -137,19 +145,17 @@ const Map = () => {
 
   return (
     <div className='h-screen w-full relative'>
-      <div className='w-full bottom-2 absolute flex flex-col py-2 items-center justify-center z-10'>
+      <div className='w-full bottom-6 absolute flex flex-col py-2 items-center justify-center z-10'>
         <div className='mt-4'>  
           <p className='text-center text-2xl font-bold'>Fare Fee: ₱{fareFee}</p>
         </div>
         <div className='w-[90vw] sm:w-1/2 bg-white py-2 rounded-md flex flex-col sm:flex-row justify-start sm:justify-between items-center px-4'>
           <div className='text-left w-full sm:w-auto'>
-            {userLocation ? (
+            {userLocation && (
               <>
                 <p className='font-bold'>Current Location:</p>
                 <p>{`Lat: ${userLocation[0].toFixed(4)}, Lon: ${userLocation[1].toFixed(4)}`}</p>
               </>
-            ) : (
-              <p>Fetching current location...</p>
             )}
           </div>
           {!isCommuting ? (
@@ -161,7 +167,7 @@ const Map = () => {
             </button>
           ) : (
             <>
-              <div>
+              <div className='w-full sm:w-auto'>
                 <p className='font-bold text-green-600'>Commute Started</p>
                 {startLocation && (
                   <p>Start Location: Lat: {startLocation[0].toFixed(4)}, Lon: {startLocation[1].toFixed(4)}</p>
@@ -182,6 +188,7 @@ const Map = () => {
         loading &&
         <div className='w-full flex flex-col h-screen justify-center items-center'>  
           <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500"></div>
+          <p>Fetching current location...</p>
         </div>
       }
 

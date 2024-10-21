@@ -113,6 +113,7 @@ const Map = () => {
   // Function to end commuting
   const endCommuting = () => {
     setIsCommuting(false);
+    setFareFee(0)
 
     // Alert the fare fee, origin, and destination
     alert(
@@ -126,12 +127,12 @@ const Map = () => {
         <div className='mt-4'>  
           <p className='text-center text-2xl font-bold'>Fare Fee: ₱{fareFee}</p>
         </div>
-        <div className='w-[90vw] sm:w-1/2 bg-white py-2 rounded-md flex flex-col sm:flex-row justify-start sm:justify-between items-center px-4'>
+        <div className='w-[90vw] lg:w-[80vw] xl:w-1/2 bg-white py-2 rounded-md flex flex-col sm:flex-row justify-start sm:justify-between items-center px-4'>
           <div className='text-left w-full sm:w-auto'>
             {userLocation && (
               <>
-                <p className='font-bold'>Current Location:</p>
-                <p>{`Lat: ${userLocation[0].toFixed(4)}, Lon: ${userLocation[1].toFixed(4)}`}</p>
+                <p className='font-bold'>Your Current Location:</p>
+                <p>{`Latitude: ${userLocation[0].toFixed(4)}, Longitude: ${userLocation[1].toFixed(4)}`}</p>
               </>
             )}
           </div>
@@ -140,27 +141,26 @@ const Map = () => {
               onClick={startCommuting}
               className='bg-blue-500 text-white px-4 py-1 rounded-md'
             >
-              Start Commuting
+              Start Your Trip
             </button>
           ) : (
             <>
               <div className='w-full sm:w-auto'>
-                <p className='font-bold text-green-600'>Commute Started</p>
+                <p className='font-bold text-green-600'>Trip Started</p>
                 {startLocation && (
-                  <p>Start Location: Lat: {startLocation[0].toFixed(4)}, Lon: {startLocation[1].toFixed(4)}</p>
+                  <p>Starting Point: Latitude: {startLocation[0].toFixed(4)}, Longitude: {startLocation[1].toFixed(4)}</p>
                 )}
               </div>
               <button
                 onClick={endCommuting}
                 className='bg-red-500 text-white px-4 py-1 rounded-md mt-2'
               >
-                End Commute
+                End Your Trip
               </button>
             </>
           )}
         </div>
       </div>
-
       {
         loading &&
         <div className='w-full flex flex-col h-screen justify-center items-center'>  
@@ -168,7 +168,6 @@ const Map = () => {
           <p>Fetching current location...</p>
         </div>
       }
-
       {
         userLocation &&
         <MapContainer

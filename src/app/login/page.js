@@ -26,7 +26,7 @@ export default function Login() {
     },
     validationSchema,
     onSubmit: (values) => {
-      navigate.replace('/trip-tracking');
+      navigate.replace('/scanner');
     },
   });
 

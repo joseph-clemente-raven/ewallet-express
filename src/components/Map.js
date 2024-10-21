@@ -30,7 +30,7 @@ const Map = () => {
   const [userLocation, setUserLocation] = useState(null); // Default to Manila
   const [route, setRoute] = useState([]); // For the polyline
   const [isCommuting, setIsCommuting] = useState(false);
-  const [startLocation, setStartLocation] = useState(null); // Store start location when commuting starts
+  const [startLocation, setStartLocation] = useState([null]); // Store start location when commuting starts
   const [fareFee, setFareFee] = useState(0);
   const [loading, setLoading] = useState(true);
   const mapRef = useRef(null); // Store the map instance
@@ -60,70 +60,44 @@ const Map = () => {
     }
   }, [userLocation]);
 
-  // Function to calculate the distance between two points (in kilometers)
-  const calculateDistance = (start, end) => {
-    const toRad = value => (value * Math.PI) / 180;
-    const R = 6371; // Earth's radius in kilometers
-    const latDiff = toRad(end[0] - start[0]);
-    const lonDiff = toRad(end[1] - start[1]);
-    const a =
-      Math.sin(latDiff / 2) * Math.sin(latDiff / 2) +
-      Math.cos(toRad(start[0])) * Math.cos(toRad(end[0])) *
-      Math.sin(lonDiff / 2) * Math.sin(lonDiff / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return R * c; // Distance in kilometers
-  };
-
   // Function to calculate the fare based on distance
   const calculateFare = (distance) => {
     const baseFare = 13; // Minimum fare in pesos
-    const distanceInInches = distance * 39370.1; // Convert distance to inches
-    const extraInches = Math.max(0, distanceInInches - 39370.1); // Inches after the first kilometer
-    const extraFare = extraInches * 0.01; // 0.01 peso per additional inch
-    return baseFare + extraFare; // Total fare: 13 pesos + 0.01 per extra inch
+    const extraDistance = Math.max(0, distance - 1); // Distance after the first kilometer
+    return baseFare + extraDistance; // Fare: 13 pesos + 1 peso per additional km
   };
-  
-  // Function to calculate the distance between two points (in kilometers)
-  // const calculateDistance = (start, end) => {
-  //   const toRad = value => (value * Math.PI) / 180;
-  //   const R = 6371; // Earth's radius in kilometers
-  //   const latDiff = toRad(end[0] - start[0]);
-  //   const lonDiff = toRad(end[1] - start[1]);
-  //   const a =
-  //     Math.sin(latDiff / 2) * Math.sin(latDiff / 2) +
-  //     Math.cos(toRad(start[0])) * Math.cos(toRad(end[0])) *
-  //     Math.sin(lonDiff / 2) * Math.sin(lonDiff / 2);
-  //   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  //   return R * c; // Distance in kilometers
-  // };
-
-  // // Function to calculate the fare based on distance
-  // const calculateFare = (distance) => {
-  //   const baseFare = 13; // Minimum fare in pesos
-  //   const extraDistance = Math.max(0, distance - 1); // Distance after the first kilometer
-  //   return baseFare + extraDistance; // Fare: 13 pesos + 1 peso per additional km
-  // };
 
   // Function to start commuting
   const startCommuting = () => {
     if (userLocation) {
       setIsCommuting(true);
       setStartLocation(userLocation); // Save user's current location as the start point
-
-      const distance = calculateDistance(userLocation, startLocation ? startLocation : userLocation); 
-      const fare = calculateFare(distance); // Calculate fare based on distance
-      
-      setFareFee(fare.toFixed(2)); // Set fare with 2 decimal places
     }
   };
 
   useEffect(() => {
-    if (isCommuting && userLocation && startLocation) {
-      const distance = calculateDistance(startLocation, userLocation); 
-      const fare = calculateFare(distance); // Recalculate fare based on the new distance
-      setFareFee(fare.toFixed(2)); // Update fare with 2 decimal places
+    if (isCommuting && startLocation && userLocation) {
+      // Fetch the route from openrouteservice API
+      fetch(
+        `https://api.openrouteservice.org/v2/directions/foot-walking?api_key=5b3ce3597851110001cf624838f8fcc6d8164fbea6ed47296b12e22b&start=${startLocation[1]},${startLocation[0]}&end=${userLocation[1]},${userLocation[0]}`
+      )
+        .then(response => response.json())
+        .then((data) => {
+          const coordinates = data.features[0].geometry.coordinates.map(
+            (coord) => [coord[1], coord[0]]
+          );
+          setRoute(coordinates);
+
+          // Calculate distance from the route's summary
+          const distance = data.features[0].properties.segments[0].distance / 1000; // in kilometers
+          const fare = calculateFare(distance); // Calculate fare based on the distance
+          setFareFee(fare.toFixed(2)); // Set fare with 2 decimal places
+        })
+        .catch(error => {
+          console.error('Error fetching route:', error);
+        });
     }
-  }, [userLocation, isCommuting]); // Trigger this effect when userLocation or isCommuting changes  
+  }, [isCommuting, startLocation, userLocation]);
 
   // Function to end commuting
   const endCommuting = () => {
@@ -134,14 +108,6 @@ const Map = () => {
       `Trip ended.\nFare Fee: ₱${fareFee}\nOrigin: Lat: ${startLocation[0].toFixed(4)}, Lon: ${startLocation[1].toFixed(4)}\nDestination: Lat: ${userLocation[0].toFixed(4)}, Lon: ${userLocation[1].toFixed(4)}`
     );
   };
-
-  // Update the route when commuting starts
-  useEffect(() => {
-    if (isCommuting && startLocation) {
-      const newRoute = [startLocation, userLocation]; // Line between start and current location
-      setRoute(newRoute); // Update the polyline route
-    }
-  }, [isCommuting, startLocation, userLocation]);  
 
   return (
     <div className='h-screen w-full relative'>

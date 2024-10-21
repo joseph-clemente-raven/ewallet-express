@@ -1,7 +1,7 @@
 'use client';
 
 import { useGlobalContext } from '@/hooks/useContext';
-import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import React from 'react';
 
 const PaymentSummary = () => {

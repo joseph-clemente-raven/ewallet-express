@@ -1,1 +1,1 @@
-export const imgSetup = '/';
+export const imgSetup = './';

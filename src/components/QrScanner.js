@@ -18,16 +18,7 @@ const QrScanner = () => {
         if (result) {
           const scannedData = result.getText();
           setData(scannedData);
-
-          // Show a prompt alert for confirmation
-          const confirmTrip = window.confirm(`You scanned: ${scannedData}. Scanning is complete, would you like to continue your trip?`);
-          if (confirmTrip) {
-            // Handle the confirmation logic here, e.g., proceed with the trip
-            alert('Great! Your trip will continue.');
-            navigate.push('/trip-tracking'); // Example route for continuing the trip
-          } else {
-            alert('Trip canceled. Feel free to scan again if needed.');
-          }
+          navigate.push('/trip-tracking'); // Example route for continuing the trip
         }
         if (err && !(err instanceof NotFoundException)) {
           console.error(err);

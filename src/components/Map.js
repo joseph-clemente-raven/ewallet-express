@@ -125,13 +125,15 @@ const Map = () => {
 
   return (
     <div className='h-screen w-full relative'>
-      <div className={`${isCommuting ? 'left-14 w-[80%]' : 'left-4 w-[90%]'} top-3 absolute bg-white flex flex-row py-2 items-center justify-between z-10 px-6 shadow-xl`}>
-        <div>
-          <Image src={`${imgSetup}user.png`} alt='user' height={45} width={45} objectFit='contain' />
-        </div>
-        <div className='relative text-right'>
-          <p className='text-xs'>Balance</p>
-          <p className='font-bold text-2xl text-primary'>₱10000.00</p>
+      <div className={`w-full top-3 absolute mx-0 flex flex-row items-center justify-center z-10`}>
+        <div className={`${isCommuting ? 'ml-8 w-[84%] sm:w-1/2' : 'left-4 w-[90%] sm:w-1/2'} py-2 px-6 bg-white flex items-center justify-between shadow-xl`}>
+          <div>
+            <Image src={`${imgSetup}user.png`} alt='user' height={45} width={45} objectFit='contain' />
+          </div>
+          <div className='relative text-right'>
+            <p className='text-xs'>Balance</p>
+            <p className='font-bold text-2xl text-primary'>₱10000.00</p>
+          </div>
         </div>
       </div>
       <div className='w-full bottom-6 absolute flex flex-col py-2 items-center justify-center z-10'>

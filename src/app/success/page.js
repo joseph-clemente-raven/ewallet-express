@@ -2,14 +2,27 @@
 
 import { useGlobalContext } from '@/hooks/useContext';
 import Link from 'next/link';
-import React from 'react';
+import { useRouter } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
 
 const Success = () => {
 
-    const { fareFee, balance } = useGlobalContext()
+    const navigate = useRouter()
+    const { fareFee, balance, setFareFee } = useGlobalContext()
+    const [total, setTotal] = useState(0)
 
     // Simulate generating a reference number and amounts
     const referenceNumber = Math.floor(Math.random() * 1000000).toString().padStart(6, '0'); // 6-digit reference number
+    const handleBack = () => {
+        navigate.push('/dashboard')
+        setTimeout(() => {
+            setFareFee(0)
+        }, 2000)
+    }
+
+    useEffect(() => {
+        setTotal(fareFee + 1)
+    }, [])
 
     return (
         <div className='h-screen flex w-full flex-col justify-center gap-4 items-center bg-gradient-to-tr from-primary to-secondary p-6'>
@@ -23,19 +36,19 @@ const Success = () => {
                 </div>
                 <div className='flex justify-between mb-4'>
                     <span className='text-gray-800'>Total Amount Paid:</span>
-                    <span className='text-gray-800'>₱{fareFee.toFixed(2)}</span>
+                    <span className='text-gray-800'>₱{total.toFixed(2)}</span>
                 </div>
                 <div className='flex justify-between font-bold'>
                     <span className='text-gray-800'>E-Wallet Balance:</span>
                     <span className='text-gray-800'>₱{balance.toFixed(2)}</span>
                 </div>
             </div>
-            <Link 
-                href={'/dashboard'} 
+            <button  
+                onClick={handleBack}
                 className='mt-6 px-6 py-3 text-primary bg-secondary font-semibold rounded-lg shadow-md hover:bg-primary hover:text-white transition duration-300'
             >
                 Go to Dashboard
-            </Link>
+            </button>
         </div>
     );
 };

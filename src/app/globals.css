@@ -24,18 +24,27 @@ body {
   }
 }
 
-@keyframes scan {
-  0% {
-    transform: translateY(-100%);
-  }
-  50% {
-    transform: translateY(0);
-  }
-  100% {
-    transform: translateY(-100%);
-  }
+.cut-out-border {
+  position: relative;
+  width: 200px; /* Adjust width */
+  height: 200px; /* Adjust height */
+  background-color: white; /* Background color for the QR box */
+  overflow: hidden; /* Prevent overflow */
 }
 
-.animate-scan {
-  animation: scan 2s linear infinite;
+.cut-out-border::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border: 4px dashed rgba(0, 0, 0, 0.7); /* Dashed border */
+  box-shadow: 
+    -8px -8px 0 white, /* Top left cut-out */
+    -8px 8px 0 white,  /* Bottom left cut-out */
+    8px -8px 0 white,  /* Top right cut-out */
+    8px 8px 0 white;   /* Bottom right cut-out */
 }
+
+

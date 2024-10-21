@@ -4,6 +4,10 @@ import { useEffect, useState, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
+import Image from 'next/image';
+import { imgSetup } from '@/helper';
+import { useRouter } from 'next/navigation';
+import { useGlobalContext } from '@/hooks/useContext';
 
 // Define custom icons to avoid default icon issues
 const originIcon = new L.Icon({
@@ -27,19 +31,24 @@ const logisticIcon = new L.Icon({
 });
 
 const Map = () => {
+
   const [userLocation, setUserLocation] = useState(null); // Default to Manila
+  const { fareFee, setFareFee } = useGlobalContext();
   const [route, setRoute] = useState([]); // For the polyline
   const [isCommuting, setIsCommuting] = useState(false);
   const [startLocation, setStartLocation] = useState([null]); // Store start location when commuting starts
-  const [fareFee, setFareFee] = useState(0);
   const [loading, setLoading] = useState(true);
   const mapRef = useRef(null); // Store the map instance
+  const navigate = useRouter()
 
   useEffect(() => {
     if (navigator.geolocation) {
       const watchId = navigator.geolocation.watchPosition(
         position => {
           const newLocation = [position.coords.latitude, position.coords.longitude];
+          if(!userLocation){
+            startCommuting(newLocation) 
+          }
           setUserLocation(newLocation);
           setLoading(false);
         },
@@ -70,12 +79,11 @@ const Map = () => {
   };
 
   // Function to start commuting
-  const startCommuting = () => {
-    if (userLocation) {
-      setIsCommuting(true);
-      setStartLocation(userLocation); // Save user's current location as the start point
-    }
+  const startCommuting = (location) => {
+    setIsCommuting(true);
+    setStartLocation(location); // Save user's current location as the start point
   };
+
 
   useEffect(() => {
     if (isCommuting && startLocation && userLocation) {
@@ -112,22 +120,25 @@ const Map = () => {
 
   // Function to end commuting
   const endCommuting = () => {
-    setIsCommuting(false);
-    setFareFee(0)
-
-    // Alert the fare fee, origin, and destination
-    alert(
-      `Trip ended.\nFare Fee: ₱${fareFee}\nOrigin: Lat: ${startLocation[0].toFixed(4)}, Lon: ${startLocation[1].toFixed(4)}\nDestination: Lat: ${userLocation[0].toFixed(4)}, Lon: ${userLocation[1].toFixed(4)}`
-    );
+    navigate.push('/payment-method')
   };
 
   return (
     <div className='h-screen w-full relative'>
-      <div className='w-full bottom-6 absolute flex flex-col py-2 items-center justify-center z-10'>
-        <div className='mt-4'>  
-          <p className='text-center text-2xl font-bold'>Fare Fee: ₱{fareFee}</p>
+      <div className={`${isCommuting ? 'left-14 w-[80%]' : 'left-4 w-[90%]'} top-3 absolute bg-white flex flex-row py-2 items-center justify-between z-10 px-6 shadow-xl`}>
+        <div>
+          <Image src={`${imgSetup}user.png`} alt='user' height={45} width={45} objectFit='contain' />
         </div>
-        <div className='w-[90vw] lg:w-[80vw] xl:w-1/2 bg-white py-2 rounded-md flex flex-col sm:flex-row justify-start sm:justify-between items-center px-4'>
+        <div className='relative text-right'>
+          <p className='text-xs'>Balance</p>
+          <p className='font-bold text-2xl text-primary'>₱10000.00</p>
+        </div>
+      </div>
+      <div className='w-full bottom-6 absolute flex flex-col py-2 items-center justify-center z-10'>
+        <div className='mb-2 bg-secondary rounded-full py-1 px-4 shadow-xl'>  
+          <p className='text-center text-2xl text-primary font-bold'>Fare Fee: ₱{fareFee}</p>
+        </div>
+        <div className='w-[90vw] shadow-xl lg:w-[80vw] xl:w-1/2 bg-white py-2 rounded-md flex flex-col sm:flex-row justify-start sm:justify-between items-center px-4'>
           <div className='text-left w-full sm:w-auto'>
             {userLocation && (
               <>
@@ -136,14 +147,14 @@ const Map = () => {
               </>
             )}
           </div>
-          {!isCommuting ? (
-            <button
-              onClick={startCommuting}
-              className='bg-blue-500 text-white px-4 py-1 rounded-md'
-            >
-              Start Your Trip
-            </button>
-          ) : (
+          {isCommuting && (
+          //   <button
+          //     onClick={startCommuting}
+          //     className='bg-blue-500 text-white px-4 py-1 rounded-md'
+          //   >
+          //     Start Your Trip
+          //   </button>
+          // ) : (
             <>
               <div className='w-full sm:w-auto'>
                 <p className='font-bold text-green-600'>Trip Started</p>

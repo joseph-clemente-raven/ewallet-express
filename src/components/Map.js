@@ -84,7 +84,6 @@ const Map = () => {
     setStartLocation(location); // Save user's current location as the start point
   };
 
-
   useEffect(() => {
     if (isCommuting && startLocation && userLocation) {
       // Fetch the route from the OpenRouteService API
@@ -132,7 +131,7 @@ const Map = () => {
           </div>
           <div className='relative text-right'>
             <p className='text-xs'>Balance</p>
-            <p className='font-bold text-2xl text-primary'>₱10000.00</p>
+            <p className='font-bold text-2xl text-primary'>₱10,000.00</p>
           </div>
         </div>
       </div>

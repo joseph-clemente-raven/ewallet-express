@@ -29,7 +29,7 @@ const QrScanner = () => {
     return () => {
       codeReader.reset();
     };
-  }, []);
+  }, [navigate]);
 
   return (
     <div className="flex flex-col items-center justify-center w-[90%] sm:max-w-md mx-auto p-5 bg-white rounded-lg shadow-lg">

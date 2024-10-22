@@ -21,8 +21,10 @@ const Success = () => {
     }
 
     useEffect(() => {
-        setTotal(fareFee + 1)
-    }, [])
+        if(fareFee){
+            setTotal(fareFee + 1)
+        }
+    }, [fareFee])
 
     return (
         <div className='h-screen flex w-full flex-col justify-center gap-4 items-center bg-gradient-to-tr from-primary to-secondary p-6'>

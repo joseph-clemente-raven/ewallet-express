@@ -81,8 +81,8 @@ const Dashboard = () => {
           <p className='text-lg font-bold'>Amount</p>
         </div>
         {
-          transactionData.map(item => (
-            <TransactionCard item={item}/>
+          transactionData.map((item, key) => (
+            <TransactionCard item={item} key={key}/>
           ))
         }
       </div>

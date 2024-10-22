@@ -1,4 +1,4 @@
-export const authenticatedRoutes = ['/payment-method', '/dashboard', '/profile'];
+export const authenticatedRoutes = ['/dashboard', '/profile'];
 export const unauthenticatedRoutes = ['/', '/login', '/register'];
 
 // other

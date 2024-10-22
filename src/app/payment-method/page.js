@@ -24,12 +24,14 @@ const PaymentSummary = () => {
     };
 
     useEffect(() => {
-        setFee(fareFee)
-        setTotal(parseFloat(fareFee) + additionalCharges)
-    }, [])
+        if(fareFee){
+            setFee(fareFee)
+            setTotal(parseFloat(fareFee) + additionalCharges)
+        }
+    }, [fareFee])
 
     return (
-        <div className='h-screen flex flex-col justify-center items-center bg-gradient-to-tr from-primary to-secondary p-6'>
+        <div className='h-screen flex flex-col w-full justify-center items-center bg-gradient-to-tr from-primary to-secondary p-6'>
             <h1 className='text-white text-3xl text-center font-bold mb-4'>Payment Summary</h1>
             <div className='bg-white rounded-lg shadow-lg p-6 w-full max-w-md'>
                 <h2 className='text-gray-800 text-xl font-semibold mb-2'>Fare Details</h2>

@@ -14,7 +14,7 @@ const Success = () => {
     // Simulate generating a reference number and amounts
     const referenceNumber = Math.floor(Math.random() * 1000000).toString().padStart(6, '0'); // 6-digit reference number
     const handleBack = () => {
-        navigate.push('/dashboard')
+        navigate.replace('/dashboard')
         setTimeout(() => {
             setFareFee(0)
         }, 2000)
@@ -27,9 +27,9 @@ const Success = () => {
     }, [fareFee])
 
     return (
-        <div className='h-screen flex w-full flex-col justify-center gap-4 items-center bg-gradient-to-tr from-primary to-secondary p-6'>
-            <h1 className='text-white text-3xl text-center font-bold mb-2'>Payment Successful!</h1>
-            <p className='text-white text-lg text-center mb-4'>Thank you for your payment.</p>
+        <div className='h-screen flex w-full flex-col justify-center gap-4 items-center bg-gradient-to-tr from-primary via-white to-secondary p-6'>
+            <h1 className='text-3xl text-center font-bold mb-2'>Payment Successful!</h1>
+            <p className='text-lg text-center mb-4'>Thank you for your payment.</p>
             <div className='bg-white rounded-lg shadow-lg p-6 w-full max-w-md'>
                 <h2 className='text-gray-800 text-xl font-semibold mb-2'>Transaction Summary</h2>
                 <div className='flex justify-between mb-4'>

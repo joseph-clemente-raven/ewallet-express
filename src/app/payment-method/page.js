@@ -31,8 +31,8 @@ const PaymentSummary = () => {
     }, [fareFee])
 
     return (
-        <div className='h-screen flex flex-col w-full justify-center items-center bg-gradient-to-tr from-primary to-secondary p-6'>
-            <h1 className='text-white text-3xl text-center font-bold mb-4'>Payment Summary</h1>
+        <div className='h-screen flex flex-col w-full justify-center items-center bg-gradient-to-tr from-primary via-white to-secondary p-6'>
+            <h1 className='text-black text-3xl text-center font-bold mb-4'>Payment Summary</h1>
             <div className='bg-white rounded-lg shadow-lg p-6 w-full max-w-md'>
                 <h2 className='text-gray-800 text-xl font-semibold mb-2'>Fare Details</h2>
                 <p className='text-gray-600 mb-4'>Your fare has been calculated based on the distance traveled and the service type.</p>

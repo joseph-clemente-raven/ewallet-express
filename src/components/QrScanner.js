@@ -1,4 +1,3 @@
-// components/QrScanner.js
 import React, { useEffect, useRef, useState } from 'react';
 import { BrowserMultiFormatReader, NotFoundException } from '@zxing/library';
 import { useRouter } from 'next/navigation';
@@ -18,7 +17,7 @@ const QrScanner = () => {
         if (result) {
           const scannedData = result.getText();
           setData(scannedData);
-          navigate.push('/trip-tracking'); // Example route for continuing the trip
+          stopCamera();  // Stop camera when QR is scannede for continuing the trip
         }
         if (err && !(err instanceof NotFoundException)) {
           console.error(err);
@@ -26,7 +25,18 @@ const QrScanner = () => {
       }
     );
 
+    const stopCamera = () => {
+      if (videoRef.current && videoRef.current.srcObject) {
+        const stream = videoRef.current.srcObject;
+        const tracks = stream.getTracks();
+        tracks.forEach((track) => track.stop()); // Stop all video tracks
+        videoRef.current.srcObject = null;
+        navigate.replace('/trip-tracking'); // Example rout
+      }
+    };
+
     return () => {
+      stopCamera();  // Stop camera when the component unmounts
       codeReader.reset();
     };
   }, [navigate]);

@@ -2,6 +2,7 @@
 
 import { imgSetup } from '@/helper';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useState } from 'react';
 
 const SidebarContent = ({children}) => {
@@ -34,10 +35,10 @@ const SidebarContent = ({children}) => {
                 />
             </div>
           <ul className="mt-4 space-y-2">
-            <li><a href="#" className="block p-2 hover:bg-gray-200">Home</a></li>
-            <li><a href="#" className="block p-2 hover:bg-gray-200">About</a></li>
-            <li><a href="#" className="block p-2 hover:bg-gray-200">Services</a></li>
-            <li><a href="#" className="block p-2 hover:bg-gray-200">Contact</a></li>
+            <Link href={'/dashboard'} className="block p-2 hover:bg-gray-200">Home</Link>
+            <Link href="/dashboard" className="block p-2 hover:bg-gray-200">About</Link>
+            <Link href="/dashboard" className="block p-2 hover:bg-gray-200">Services</Link>
+            <Link href="/dashboard" className="block p-2 hover:bg-gray-200">Contact</Link>
           </ul>
         </div>
       </div>

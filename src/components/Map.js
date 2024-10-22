@@ -8,6 +8,7 @@ import Image from 'next/image';
 import { imgSetup } from '@/helper';
 import { useRouter } from 'next/navigation';
 import { useGlobalContext } from '@/hooks/useContext';
+import Link from 'next/link';
 
 // Define custom icons to avoid default icon issues
 const originIcon = new L.Icon({
@@ -33,7 +34,7 @@ const logisticIcon = new L.Icon({
 const Map = () => {
 
   const [userLocation, setUserLocation] = useState(null); // Default to Manila
-  const { fareFee, setFareFee } = useGlobalContext();
+  const { fareFee, balance, setFareFee } = useGlobalContext();
   const [route, setRoute] = useState([]); // For the polyline
   const [isCommuting, setIsCommuting] = useState(false);
   const [startLocation, setStartLocation] = useState([null]); // Store start location when commuting starts
@@ -126,12 +127,12 @@ const Map = () => {
     <div className='h-screen w-full relative'>
       <div className={`w-full top-3 absolute mx-0 flex flex-row items-center justify-center z-10`}>
         <div className={`${isCommuting ? 'ml-8 w-[84%] sm:w-1/2' : 'left-4 w-[90%] sm:w-1/2'} py-2 px-6 bg-white flex items-center justify-between shadow-xl`}>
-          <div>
-            <Image src={`${imgSetup}user.png`} alt='user' height={45} width={45} objectFit='contain' />
-          </div>
+          <Link href={'/dashboard'}>
+            <Image src={`${imgSetup}user.png`} className='rounded-full border-2 border-primary' alt='user' height={45} width={45} objectFit='contain' />
+          </Link>
           <div className='relative text-right'>
             <p className='text-xs'>Balance</p>
-            <p className='font-bold text-2xl text-primary'>₱10,000.00</p>
+            <p className='font-bold text-2xl text-primary'>₱{balance.toFixed(2)}</p>
           </div>
         </div>
       </div>

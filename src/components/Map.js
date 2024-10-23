@@ -79,7 +79,6 @@ const Map = () => {
   // Function to start commuting
   const startCommuting = (location) => {
     setIsCommuting(true);
-    setBalance(currentAccount.balance)
     setStartLocation(location); // Save user's current location as the start point
   };
 
@@ -125,10 +124,11 @@ const Map = () => {
     }
   }, [isCommuting, startLocation, userLocation]);
 
-  // Function to end commuting
-  const endCommuting = () => {
-    navigate.push('/payment-method')
-  };
+  useEffect(() => {
+    if(currentAccount){
+      setBalance(currentAccount?.balance || 0)
+    }
+  }, [])
 
   return (
     <div className='h-screen w-full relative'>
@@ -139,7 +139,7 @@ const Map = () => {
           </Link>
           <div className='relative text-right'>
             <p className='text-xs'>Balance</p>
-            <p className='font-bold text-2xl text-primary'>₱{currentAccount?.balance.toFixed(2)}</p>
+            <p className='font-bold text-2xl text-primary'>₱{balance.toFixed(2)}</p>
           </div>
         </div>
       </div>

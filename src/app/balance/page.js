@@ -1,6 +1,7 @@
 'use client';
 
 import BalanceInquiry from '@/components/BalanceInquiry';
+import { useGlobalContext } from '@/hooks/useContext';
 import { useRouter } from 'next/navigation';
 import React from 'react';
 

@@ -1,69 +1,88 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { BrowserMultiFormatReader, NotFoundException } from '@zxing/library';
-import { useRouter } from 'next/navigation';
-import { toast } from 'react-toastify';
 import { useGlobalContext } from '@/hooks/useContext';
 
-const BalanceInquiry = () => {
-  const { account } = useGlobalContext();
+const BalanceInquiry = ({back}) => {
+  const [data, setData] = useState('');
+  const [scanning, setScanning] = useState(false); // New state to track scanning status
   const videoRef = useRef(null);
-  const [data, setData] = useState(null);
-  const navigate = useRouter();
+  const codeReader = useRef(null);
   
+  const { account } = useGlobalContext();
+
   useEffect(() => {
-    const codeReader = new BrowserMultiFormatReader();
-    
-    const videoConstraints = {
-      video: {
-        facingMode: 'user', // Requests the front camera
-      }
-    };
+    codeReader.current = new BrowserMultiFormatReader();
 
-    codeReader.decodeFromVideoDevice(
-      null,
-      videoRef.current,
-      (result, err) => {
-        if (result) {
-          const scannedData = result.getText();
-          const checkData = account.find(item => item.id === scannedData);
-          if(checkData){
-            setData(`₱${checkData.balance.toFixed(2)}`);
-          }
-          else{
-            setData('Please scan the QR code to check your balance.')
-            toast.error("Invalid Account");
-          }
-        }
-        if (err && !(err instanceof NotFoundException)) {
-          console.error(err);
-        }
-      },
-      videoConstraints // Pass the video constraints here
-    );
-
-    const stopCamera = (link) => {
-      if (videoRef.current && videoRef.current.srcObject) {
-        const stream = videoRef.current.srcObject;
-        const tracks = stream.getTracks();
-        tracks.forEach((track) => track.stop()); // Stop all video tracks
-        videoRef.current.srcObject = null;
-      }
-    };
+    // Start camera when component is mounted
+    startCamera();
 
     return () => {
-      stopCamera(); // Stop camera when the component unmounts
-      codeReader.reset();
+      // Cleanup when the component is unmounted
+      codeReader.current.reset();
+      stopCamera();
     };
-  }, [navigate]);
+  }, []);
 
-  return (
+  const startCamera = async () => {
+    if (codeReader.current) {
+      try {
+        // List video input devices and use the first one
+        const videoInputDevices = await codeReader.current.listVideoInputDevices();
+        const selectedDeviceId = videoInputDevices[0]?.deviceId;
+
+        // Start decoding from the video device (camera)
+        if (selectedDeviceId && videoRef.current) {
+          setScanning(true); // Set scanning to true before starting
+          await codeReader.current.decodeFromVideoDevice(selectedDeviceId, videoRef.current, (result, err) => {
+            if (result) {
+              const scannedData = result.getText();
+              const checkData = account.find(item => item.id === scannedData);
+              if(checkData){
+                setData(`₱${checkData.balance.toFixed(2)}`);
+                stopCamera()
+              }
+              else{
+                setData('Please scan the QR code to check your balance.')
+                toast.error("Invalid Account");
+              }
+              setScanning(false); // Set scanning to false after a successful read
+            }
+            if (err) {
+              if (err instanceof NotFoundException) {
+                // Only log if currently scanning
+                if (scanning) {
+                  console.log('No QR code found. Please ensure the QR code is visible and clear.');
+                }
+              } else {
+                console.error('Decoding error:', err);
+              }
+            }
+          });
+        } else {
+          console.error('No video input devices found or no reference to video element');
+        }
+      } catch (err) {
+        console.error('Error starting video stream', err);
+      }
+    }
+  };
+
+  const stopCamera = () => {
+    if (videoRef.current && videoRef.current.srcObject) {
+      const tracks = videoRef.current.srcObject.getTracks();
+      tracks.forEach(track => track.stop());
+      videoRef.current.srcObject = null;
+    }
+  };
+
+  return (    
     <div className="flex flex-col items-center justify-center w-[90%] sm:max-w-xl mx-auto p-5 bg-white rounded-lg shadow-lg">
       {
         data ? 
         <>
             <h2 className="mb-4 text-2xl font-semibold text-gray-800">Current Balance</h2>
             <div className='flex w-full border-t-2 flex-col text-center py-3'>
-                <p className='text-6xl font-bold text-center'>₱1000</p>
+                <p className='text-6xl font-bold text-center'>{data}</p>
             </div>
         </>
         :
@@ -79,4 +98,4 @@ const BalanceInquiry = () => {
   );
 };
 
-export default BalanceInquiry
+export default BalanceInquiry;

@@ -10,13 +10,13 @@ const Success = () => {
     const navigate = useRouter()
     const { fareFee, balance, setBalance, setCurrentAccount, setFareFee } = useGlobalContext()
     const [total, setTotal] = useState(0)
+    const [reference, setReference] = useState(Math.floor(Math.random() * 1000000).toString().padStart(6, '0'))
 
     // Simulate generating a reference number and amounts
-    const referenceNumber = Math.floor(Math.random() * 1000000).toString().padStart(6, '0'); // 6-digit reference number
     const handleBack = () => {
-        navigate.replace('/menu')
+        navigate.replace('/menu');
         setCurrentAccount(null);
-        setBalance(0)
+        setBalance(0);
         setFareFee(0);
     }
 
@@ -34,7 +34,7 @@ const Success = () => {
                 <h2 className='text-gray-800 text-xl font-semibold mb-2'>Transaction Summary</h2>
                 <div className='flex justify-between mb-4'>
                     <span className='text-gray-800'>Reference Number:</span>
-                    <span className='text-gray-800'>#{referenceNumber}</span>
+                    <span className='text-gray-800'>#{reference}</span>
                 </div>
                 <div className='flex justify-between mb-4'>
                     <span className='text-gray-800'>Total Amount Paid:</span>

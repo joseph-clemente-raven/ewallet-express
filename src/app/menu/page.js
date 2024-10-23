@@ -14,7 +14,7 @@ const Menu = () => {
 
     useEffect(() => {
         setCurrentAccount(null);
-    }, [])
+    }, [navigate])
 
     // const handleBack = () => {
     //     navigate.back()

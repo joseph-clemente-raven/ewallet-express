@@ -14,6 +14,18 @@ export const GlobalProvider = ({ children }) => {
   const [balance, setBalance] = useState(0)
   const [transaction, setTransaction] = useState([])
   const [currentAccount, setCurrentAccount] = useState(null)
+  const [account, setAccount] = useState([
+    {
+      id: '12323124121241',
+      fullname: "Pedro Cruz",
+      balance: 1000
+    },
+    {
+      id: '123231243123asdaw312',
+      fullname: "Juan Dela Cruz",
+      balance: 500
+    }
+  ])
 
   // {
     // accountid
@@ -40,11 +52,13 @@ export const GlobalProvider = ({ children }) => {
   return (
     <GlobalContext.Provider value={{
       user,
+      account,
       currentAccount,
       balance,
       fareFee,
       transaction,
       setUser,
+      setAccount,
       setCurrentAccount,
       setBalance,
       setFareFee,

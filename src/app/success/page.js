@@ -15,11 +15,9 @@ const Success = () => {
     const referenceNumber = Math.floor(Math.random() * 1000000).toString().padStart(6, '0'); // 6-digit reference number
     const handleBack = () => {
         navigate.replace('/menu')
-        setTimeout(() => {
-            setCurrentAccount(null);
-            setBalance(0)
-            setFareFee(0);
-        }, 2000)
+        setCurrentAccount(null);
+        setBalance(0)
+        setFareFee(0);
     }
 
     useEffect(() => {

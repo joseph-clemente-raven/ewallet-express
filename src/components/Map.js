@@ -34,7 +34,7 @@ const logisticIcon = new L.Icon({
 const Map = () => {
 
   const [userLocation, setUserLocation] = useState(null); // Default to Manila
-  const { fareFee, balance, setFareFee, currentAccount, setTransaction, transaction } = useGlobalContext();
+  const { fareFee, balance, setBalance, setFareFee, currentAccount, setTransaction, transaction } = useGlobalContext();
   const [route, setRoute] = useState([]); // For the polyline
   const [isCommuting, setIsCommuting] = useState(false);
   const [startLocation, setStartLocation] = useState(null); // Store start location when commuting starts
@@ -79,6 +79,7 @@ const Map = () => {
   // Function to start commuting
   const startCommuting = (location) => {
     setIsCommuting(true);
+    setBalance(currentAccount.balance)
     setStartLocation(location); // Save user's current location as the start point
   };
 
@@ -108,8 +109,8 @@ const Map = () => {
             if(checkTrasanction.length === 0){
               setTransaction([...transaction, {
                 accountid: currentAccount.id,
-                startingPoint: userLocation,
-                endPoint: '',
+                origin: userLocation,
+                destination: '',
                 status: 'Ongoing'
               }])
             }
@@ -138,7 +139,7 @@ const Map = () => {
           </Link>
           <div className='relative text-right'>
             <p className='text-xs'>Balance</p>
-            <p className='font-bold text-2xl text-primary'>₱{balance.toFixed(2)}</p>
+            <p className='font-bold text-2xl text-primary'>₱{currentAccount?.balance.toFixed(2)}</p>
           </div>
         </div>
       </div>

@@ -1,10 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { BrowserMultiFormatReader, NotFoundException } from '@zxing/library';
 import { useRouter } from 'next/navigation';
-import { account } from '@/constant';
 import { toast } from 'react-toastify';
+import { useGlobalContext } from '@/hooks/useContext';
 
 const BalanceInquiry = () => {
+  const { account } = useGlobalContext();
   const videoRef = useRef(null);
   const [data, setData] = useState(null);
   const navigate = useRouter();

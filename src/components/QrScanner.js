@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { BrowserMultiFormatReader, NotFoundException } from '@zxing/library';
 import { useRouter } from 'next/navigation';
-import { account } from '@/constant';
 import { useGlobalContext } from '@/hooks/useContext';
 import { toast } from 'react-toastify';
 
@@ -9,7 +8,7 @@ const QrScanner = () => {
   const videoRef = useRef(null);
   const [data, setData] = useState("Please scan the QR code to start your trip.");
   const navigate = useRouter();
-  const { transaction, setCurrentAccount } = useGlobalContext()
+  const { transaction, setCurrentAccount, account } = useGlobalContext()
 
   useEffect(() => {
     const codeReader = new BrowserMultiFormatReader();
@@ -62,7 +61,6 @@ const QrScanner = () => {
     };
 
     return () => {
-      stopCamera(); // Stop camera when the component unmounts
       codeReader.reset();
     };
   }, [navigate]);

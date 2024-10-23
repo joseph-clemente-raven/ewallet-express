@@ -35,7 +35,7 @@ const logisticIcon = new L.Icon({
 const EndTrip = () => {
 
   const [userLocation, setUserLocation] = useState(null); // Default to Manila
-  const { fareFee, balance, setBalance, setFareFee, transaction, currentAccount } = useGlobalContext();
+  const { fareFee, balance, setBalance, setFareFee, transaction, setTransaction, currentAccount } = useGlobalContext();
   const [route, setRoute] = useState([]); // For the polyline
   const [isCommuting, setIsCommuting] = useState(false);
   const [startLocation, setStartLocation] = useState([null]); // Store start location when commuting starts
@@ -83,10 +83,10 @@ const EndTrip = () => {
   // Function to start commuting
   const startCommuting = () => {
     const checkTrasanction = transaction.find(item => item.accountid == currentAccount.id && item.status == 'Ongoing');
-    if(checkTrasanction?.startingPoint){
-      setBalance(currentAccount.balance);
+    if(checkTrasanction?.origin){
+      setBalance(currentAccount?.balance);
       setIsCommuting(true);
-      setStartLocation(checkTrasanction.startingPoint); // Save user's current location as the start point
+      setStartLocation(checkTrasanction.origin); // Save user's current location as the start point
     }
     else{
       toast.error("Something went wrong")
@@ -128,6 +128,16 @@ const EndTrip = () => {
 
   // Function to end commuting
   const endCommuting = () => {
+    const updatedTransaction = transaction.map(item => {
+        if (item.accountid === currentAccount.id && item.status === 'Ongoing') {
+            return { 
+                ...item, 
+                destination: userLocation
+            };
+        }
+        return item;
+    });
+    setTransaction(updatedTransaction)
     navigate.push('/payment-method')
   };
 
@@ -142,7 +152,7 @@ const EndTrip = () => {
           </Link>
           <div className='relative text-right'>
             <p className='text-xs'>Balance</p>
-            <p className='font-bold text-2xl text-primary'>₱{balance.toFixed(2)}</p>
+            <p className='font-bold text-2xl text-primary'>₱{balance ? balance?.toFixed(2) : '0.00'}</p>
           </div>
         </div>
       </div>

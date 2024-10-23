@@ -9,11 +9,12 @@ const additionalCharges = 1.00; // Additional charges amount
 
 const PaymentSummary = () => {
     
-    const { fareFee, setFareFee, balance, setBalance, currentAccount, transaction, setTransaction } = useGlobalContext();
+    const { fareFee, setFareFee, balance, setBalance, account, setAccount, currentAccount, transaction, setTransaction } = useGlobalContext();
     const navigate = useRouter();
 
     const [fee, setFee] = useState(0);
     const [total, setTotal] = useState(0)
+    const [location, setLocation] = useState({origin: null, destination: null})
 
     const handlePay = () => {
         const checkTransaction = transaction.find(item => item.accountid === currentAccount.id && item.status === 'Ongoing');
@@ -24,36 +25,47 @@ const PaymentSummary = () => {
                 if (item.accountid === currentAccount.id && item.status === 'Ongoing') {
                     return { 
                         ...item, 
-                        status: 'Completed', // or any relevant status
+                        status: 'Completed',
                         TotalAmount: total 
                     };
                 }
                 return item;
             });
     
-            setFareFee(total); // Setting the fare fee
-            let newBalance = balance - total;
+            setFareFee(total); // Set the fare fee
     
+            // Update the account balance
+            const updatedAccounts = account.map(account => {
+                if (account.id === currentAccount.id) {
+                    return {
+                        ...account,
+                        balance: account.balance - total  // Subtract the fare fee
+                    };
+                }
+                return account;
+            });
+    
+    
+            setBalance(balance - total);
+            setAccount(updatedAccounts); // Update accounts with new balance
+            setTransaction(updatedTransaction); // Update transaction state
             navigate.replace('/success'); // Redirect to success page
-            
-            // Delay balance update to simulate real-time processing
-            setTimeout(() => {
-                setBalance(newBalance);
-                // Update the state with the new transaction data
-                setTransaction(updatedTransaction);
-            }, 2000);
-        }
-        else{
+        } else {
             toast.error("Invalid Account");
         }
     };    
 
     useEffect(() => {
-        if(fareFee){
-            setFee(fareFee)
-            setTotal(parseFloat(fareFee) + additionalCharges)
-        }
-    }, [fareFee])
+        const checkTransaction = transaction.find(item => item.accountid === currentAccount.id && item.status === 'Ongoing');
+            if(checkTransaction){
+                setLocation({
+                    origin: checkTransaction.origin,
+                    destination: checkTransaction.destination
+                })
+                setFee(fareFee)
+                setTotal(parseFloat(fareFee) + additionalCharges)
+            }
+    }, [])
 
     return (
         <div className='h-screen flex flex-col w-full justify-center items-center bg-gradient-to-tr from-primary via-white to-secondary p-6'>
@@ -61,6 +73,14 @@ const PaymentSummary = () => {
             <div className='bg-white rounded-lg shadow-lg p-6 w-full max-w-md'>
                 <h2 className='text-gray-800 text-xl font-semibold mb-2'>Fare Details</h2>
                 <p className='text-gray-600 mb-4'>Your fare has been calculated based on the distance traveled and the service type.</p>
+                <div className='flex justify-between mb-4'>
+                    <span className='text-gray-800'>Origin:</span>
+                    <span className='text-gray-800'>{location?.origin || "N/A"}</span>
+                </div>
+                <div className='flex justify-between mb-4'>
+                    <span className='text-gray-800'>Destination:</span>
+                    <span className='text-gray-800'>{location?.destination || "N/A"}</span>
+                </div>
                 <div className='flex justify-between mb-4'>
                     <span className='text-gray-800'>Base Fare:</span>
                     <span className='text-gray-800'>₱{fee}</span>

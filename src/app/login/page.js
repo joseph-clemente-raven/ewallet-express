@@ -26,7 +26,7 @@ export default function Login() {
     },
     validationSchema,
     onSubmit: (values) => {
-      navigate.replace('/scanner');
+      navigate.replace('/menu');
     },
   });
 

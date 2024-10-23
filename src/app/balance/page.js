@@ -1,11 +1,10 @@
 'use client';
 
-import QrScanner from '@/components/QrScanner';
-import { useGlobalContext } from '@/hooks/useContext';
+import BalanceInquiry from '@/components/BalanceInquiry';
 import { useRouter } from 'next/navigation';
 import React from 'react';
 
-const Scanner = () => {
+const Balance = () => {
 
   const navigate = useRouter();
 
@@ -19,10 +18,9 @@ const Scanner = () => {
         </div>
       </div>
       <h1 className='text-2xl text-center font-bold'>Welcome, Byahero!</h1>
-      <QrScanner />
-      {/* <Link href={'/trip-tracking'} className='text-center text-gray-700 px-10'>Click here if there is no QR code available (for testing purposes).</Link> */}
+      <BalanceInquiry />
     </div>
   );
 };
 
-export default Scanner;
+export default Balance;

@@ -9,6 +9,7 @@ import { imgSetup } from '@/helper';
 import { useRouter } from 'next/navigation';
 import { useGlobalContext } from '@/hooks/useContext';
 import Link from 'next/link';
+import { toast } from 'react-toastify';
 
 // Define custom icons to avoid default icon issues
 const originIcon = new L.Icon({
@@ -31,13 +32,13 @@ const logisticIcon = new L.Icon({
   iconSize: [50, 50],
 });
 
-const Map = () => {
+const EndTrip = () => {
 
   const [userLocation, setUserLocation] = useState(null); // Default to Manila
-  const { fareFee, balance, setFareFee, currentAccount, setTransaction, transaction } = useGlobalContext();
+  const { fareFee, balance, setBalance, setFareFee, transaction, currentAccount } = useGlobalContext();
   const [route, setRoute] = useState([]); // For the polyline
   const [isCommuting, setIsCommuting] = useState(false);
-  const [startLocation, setStartLocation] = useState(null); // Store start location when commuting starts
+  const [startLocation, setStartLocation] = useState([null]); // Store start location when commuting starts
   const [loading, setLoading] = useState(true);
   const mapRef = useRef(null); // Store the map instance
   const navigate = useRouter()
@@ -47,6 +48,9 @@ const Map = () => {
       const watchId = navigator.geolocation.watchPosition(
         position => {
           const newLocation = [position.coords.latitude, position.coords.longitude];
+          if(!userLocation){
+            startCommuting() 
+          }
           setUserLocation(newLocation);
           setLoading(false);
         },
@@ -77,9 +81,16 @@ const Map = () => {
   };
 
   // Function to start commuting
-  const startCommuting = (location) => {
-    setIsCommuting(true);
-    setStartLocation(location); // Save user's current location as the start point
+  const startCommuting = () => {
+    const checkTrasanction = transaction.find(item => item.accountid == currentAccount.id && item.status == 'Ongoing');
+    if(checkTrasanction?.startingPoint){
+      setBalance(currentAccount.balance);
+      setIsCommuting(true);
+      setStartLocation(checkTrasanction.startingPoint); // Save user's current location as the start point
+    }
+    else{
+      toast.error("Something went wrong")
+    }
   };
 
   useEffect(() => {
@@ -104,15 +115,6 @@ const Map = () => {
             // Get distance in meters from the route's summary
             const distanceInMeters = data.features[0].properties.segments[0].distance; // Distance in meters
             const fare = calculateFare(distanceInMeters); // Calculate fare based on distance in meters
-            const checkTrasanction = transaction.filter(item => item.id == currentAccount.id && item.status == 'Ongoing');
-            if(checkTrasanction.length === 0){
-              setTransaction([...transaction, {
-                accountid: currentAccount.id,
-                startingPoint: userLocation,
-                endPoint: '',
-                status: 'Ongoing'
-              }])
-            }
             setFareFee(fare.toFixed(2)); // Set fare with 2 decimal places
           } else {
             console.warn('No route features found in response data.');
@@ -128,6 +130,8 @@ const Map = () => {
   const endCommuting = () => {
     navigate.push('/payment-method')
   };
+
+  console.log(startLocation)
 
   return (
     <div className='h-screen w-full relative'>
@@ -155,26 +159,19 @@ const Map = () => {
               </>
             )}
           </div>
-          {!isCommuting ? (
-            <button
-              onClick={() => startCommuting(userLocation)}
-              className='bg-blue-500 text-white px-4 py-1 rounded-md'
-            >
-              Start Your Trip
-            </button>
-          ) : (
+          {isCommuting && (
             <>
               <div className='w-full sm:w-auto'>
                 <p className='font-bold text-green-600'>Trip Started</p>
-                {(startLocation && startLocation[0] && startLocation[1]) && (
+                {(startLocation && isCommuting) && (
                   <p>Starting Point: Latitude: {startLocation[0]?.toFixed(4)}, Longitude: {startLocation[1]?.toFixed(4)}</p>
                 )}
               </div>
               <button
-                onClick={() => navigate.replace('/menu')}
+                onClick={endCommuting}
                 className='bg-red-500 text-white px-4 py-1 rounded-md mt-2'
               >
-                Exit
+                End Your Trip
               </button>
             </>
           )}
@@ -231,4 +228,4 @@ const Map = () => {
   );
 };
 
-export default Map;
+export default EndTrip;

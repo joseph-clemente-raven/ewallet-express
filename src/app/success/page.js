@@ -8,15 +8,17 @@ import React, { useEffect, useState } from 'react';
 const Success = () => {
 
     const navigate = useRouter()
-    const { fareFee, balance, setFareFee } = useGlobalContext()
+    const { fareFee, balance, setBalance, setCurrentAccount, setFareFee } = useGlobalContext()
     const [total, setTotal] = useState(0)
 
     // Simulate generating a reference number and amounts
     const referenceNumber = Math.floor(Math.random() * 1000000).toString().padStart(6, '0'); // 6-digit reference number
     const handleBack = () => {
-        navigate.replace('/dashboard')
+        navigate.replace('/menu')
         setTimeout(() => {
-            setFareFee(0)
+            setCurrentAccount(null);
+            setBalance(0)
+            setFareFee(0);
         }, 2000)
     }
 
@@ -49,7 +51,7 @@ const Success = () => {
                 onClick={handleBack}
                 className='mt-6 px-6 py-3 text-primary bg-secondary font-semibold rounded-lg shadow-md hover:bg-primary hover:text-white transition duration-300'
             >
-                Go to Dashboard
+                Go to Menu
             </button>
         </div>
     );

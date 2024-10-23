@@ -2,15 +2,13 @@ import React, { useEffect, useRef, useState } from 'react';
 import { BrowserMultiFormatReader, NotFoundException } from '@zxing/library';
 import { useRouter } from 'next/navigation';
 import { account } from '@/constant';
-import { useGlobalContext } from '@/hooks/useContext';
 import { toast } from 'react-toastify';
 
-const QrScanner = () => {
+const BalanceInquiry = () => {
   const videoRef = useRef(null);
-  const [data, setData] = useState("Please scan the QR code to start your trip.");
+  const [data, setData] = useState(null);
   const navigate = useRouter();
-  const { transaction, setCurrentAccount } = useGlobalContext()
-
+  
   useEffect(() => {
     const codeReader = new BrowserMultiFormatReader();
     
@@ -28,19 +26,10 @@ const QrScanner = () => {
           const scannedData = result.getText();
           const checkData = account.find(item => item.id === scannedData);
           if(checkData){
-            
-            const findTransaction = transaction.find(item => item.accountid);
-            if(findTransaction?.status === 'Ongoing'){
-              stopCamera('/end-trip'); // Stop camera when QR is scanned
-              setCurrentAccount(checkData)
-            }
-            else{
-              stopCamera('/trip-tracking'); // Stop camera when QR is scanned
-              setCurrentAccount(checkData)
-            }
-            setData(scannedData);
+            setData(`₱${checkData.balance.toFixed(2)}`);
           }
           else{
+            setData('Please scan the QR code to check your balance.')
             toast.error("Invalid Account");
           }
         }
@@ -57,7 +46,6 @@ const QrScanner = () => {
         const tracks = stream.getTracks();
         tracks.forEach((track) => track.stop()); // Stop all video tracks
         videoRef.current.srcObject = null;
-        navigate.replace(link); // Example route
       }
     };
 
@@ -69,13 +57,25 @@ const QrScanner = () => {
 
   return (
     <div className="flex flex-col items-center justify-center w-[90%] sm:max-w-xl mx-auto p-5 bg-white rounded-lg shadow-lg">
-      <h2 className="mb-4 text-2xl font-semibold text-gray-800">QR Code Trip Scanner</h2>
-      <div className="relative w-full overflow-hidden border-2 border-blue-500 rounded-lg">
-        <video ref={videoRef} className="w-full h-auto" autoPlay />
-      </div>
-      <p className="mt-4 text-sm text-blue-600 text-center">{data}</p>
+      {
+        data ? 
+        <>
+            <h2 className="mb-4 text-2xl font-semibold text-gray-800">Current Balance</h2>
+            <div className='flex w-full border-t-2 flex-col text-center py-3'>
+                <p className='text-6xl font-bold text-center'>₱1000</p>
+            </div>
+        </>
+        :
+        <>
+            <h2 className="mb-4 text-2xl font-semibold text-gray-800">QR Code Balance Inquiry Scanner</h2>
+            <div className="relative w-full overflow-hidden border-2 border-blue-500 rounded-lg">
+            <video ref={videoRef} className="w-full h-auto" autoPlay />
+            </div>
+            <p className="mt-4 text-sm text-center">Please scan the QR code to check your balance.</p>
+        </>
+      }  
     </div>
   );
 };
 
-export default QrScanner;
+export default BalanceInquiry

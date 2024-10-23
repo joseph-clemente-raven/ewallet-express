@@ -5,13 +5,25 @@ export const unauthenticatedRoutes = ['/', '/login', '/register'];
 // /trip-tracking', '/scanner', '/success', 
 
 export const transactionData = [
-    { origin: "Makati", destination: "Taguig", fare: 50 },
-    { origin: "Quezon City", destination: "Pasig", fare: 45 },
-    { origin: "Manila", destination: "Parañaque", fare: 60 },
-    { origin: "Mandaluyong", destination: "San Juan", fare: 40 },
-    { origin: "Pasay", destination: "Caloocan", fare: 55 }
-  ];
+  { origin: "Makati", destination: "Taguig", fare: 50 },
+  { origin: "Quezon City", destination: "Pasig", fare: 45 },
+  { origin: "Manila", destination: "Parañaque", fare: 60 },
+  { origin: "Mandaluyong", destination: "San Juan", fare: 40 },
+  { origin: "Pasay", destination: "Caloocan", fare: 55 }
+];
 
+export const account = [
+  {
+    id: '12323124121241',
+    fullname: "Pedro Cruz",
+    balance: 1000
+  },
+  {
+    id: '123231243123asdaw312',
+    fullname: "Juan Dela Cruz",
+    balance: 500
+  }
+]
 
 export const plans = [
   {

@@ -10,13 +10,17 @@ const QrScanner = () => {
   const [data, setData] = useState("Please scan the QR code to start your trip.");
   const navigate = useRouter();
   const codeReader = useRef(null);
-  const { transaction, setCurrentAccount, account } = useGlobalContext()
-  
+  const { transaction, setCurrentAccount, account } = useGlobalContext();
+
   useEffect(() => {
     codeReader.current = new BrowserMultiFormatReader();
 
-    // Start camera when component is mounted
-    startCamera();
+    // Check for HTTPS or localhost
+    if (window.location.protocol === 'https:' || window.location.hostname === 'localhost') {
+      startCamera();
+    } else {
+      toast.error('Camera access requires HTTPS or localhost.');
+    }
 
     return () => {
       // Cleanup when the component is unmounted
@@ -26,8 +30,11 @@ const QrScanner = () => {
   }, []);
 
   const startCamera = async () => {
-    if (codeReader.current) {
-      try {
+    try {
+      // Request camera permission
+      await navigator.mediaDevices.getUserMedia({ video: true });
+
+      if (codeReader.current) {
         // List video input devices and use the first one
         const videoInputDevices = await codeReader.current.listVideoInputDevices();
         const selectedDeviceId = videoInputDevices[0]?.deviceId;
@@ -39,24 +46,22 @@ const QrScanner = () => {
             if (result) {
               const scannedData = result.getText();
               const checkData = account.find(item => item.id === scannedData);
-              if(checkData){
-                const findTransaction = transaction.filter(item => item.accountid && item.status == 'Ongoing');
-                if(findTransaction.length > 0){
+              if (checkData) {
+                const findTransaction = transaction.filter(item => item.accountid && item.status === 'Ongoing');
+                if (findTransaction.length > 0) {
                   setCurrentAccount(checkData);
                   setData(scannedData);
                   stopCamera(); // Stop camera when QR is scanned
-                  navigate.replace('/end-trip'); // Stop camera when QR is scanned
+                  navigate.replace('/end-trip');
                   return;
-                }
-                else{
+                } else {
                   setCurrentAccount(checkData);
                   setData(scannedData);
                   stopCamera(); // Stop camera when QR is scanned
                   navigate.replace('/trip-tracking');
                   return;
                 }
-              }
-              else{
+              } else {
                 toast.error("Invalid Account");
               }
               setScanning(false); // Set scanning to false after a successful read
@@ -75,12 +80,13 @@ const QrScanner = () => {
         } else {
           console.error('No video input devices found or no reference to video element');
         }
-      } catch (err) {
-        console.error('Error starting video stream', err);
       }
+    } catch (err) {
+      console.error('Error accessing camera or permissions denied:', err);
+      toast.error('Please grant camera access.');
     }
   };
-  
+
   const stopCamera = () => {
     if (videoRef.current && videoRef.current.srcObject) {
       const tracks = videoRef.current.srcObject.getTracks();
